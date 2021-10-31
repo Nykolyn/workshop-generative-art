@@ -1,4 +1,5 @@
 const canvasSketch = require('canvas-sketch');
+const random = require('canvas-sketch-util/random')
 
 const lerp = (min, max, t) => {
   return min * (1 - t) + max * t;
@@ -11,7 +12,7 @@ const settings = {
 const sketch = () => {
   const createGrid = () => {
     const points = []
-    const count = 10;
+    const count = 200;
     for (let x = 0; x < count; x += 1) {
       for (let y = 0; y < count; y += 1) {
         const u = count <= 1 ? 0.5 : x / (count - 1)
@@ -23,8 +24,9 @@ const sketch = () => {
     return points
   }
 
-  const points = createGrid()
-  const margin = 100;
+  random.setSeed(512)
+  const points = createGrid().filter(() => random.value() > 0.5)
+  const margin = 400;
 
   return ({ context, width, height }) => {
     context.fillStyle = 'white';
@@ -35,7 +37,7 @@ const sketch = () => {
       const y = lerp(margin, height - margin, v)
 
       context.beginPath()
-      context.arc(x, y, 10, 0, Math.PI * 2, false)
+      context.rect(x, y, 4, 4)
       context.strokeStyle = 'black'
       context.lineWidth = 4
       context.stroke();
